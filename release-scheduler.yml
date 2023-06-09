@@ -19,7 +19,7 @@ steps:
 # 3. Deploy to selective stages
 - script: |
     # API documentation https://learn.microsoft.com/en-us/rest/api/azure/devops/release/releases/update-release-environment?view=azure-devops-rest-5.1&tabs=HTTP
-    curl -X PATCH https://vsrm.dev.azure.com/CustomerDemos-JL/ElevanceHealth/_apis/Release/releases/7/environments/3?api-version=5.1-preview.6
+    curl -X PATCH https://vsrm.dev.azure.com/CustomerDemos-JL/ElevanceHealth/_apis/Release/releases/7/environments/3?api-version=5.1-preview.6 \
       --user '':'$(PAT)' \
       -H "Content-Type: application/json" \
       -H "Accept:application/json" \
