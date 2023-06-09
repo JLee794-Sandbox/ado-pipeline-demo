@@ -6,6 +6,8 @@
 trigger:
 - main
 
+variables:
+- group: 'ReleaseAPIParameters'
 pool:
   vmImage: ubuntu-latest
 
@@ -17,3 +19,24 @@ steps:
     echo Add other tasks to build, test, and deploy your project.
     echo See https://aka.ms/yaml
   displayName: 'Run a multi-line script'
+
+- script: |
+    # API documentation https://learn.microsoft.com/en-us/rest/api/azure/devops/release/releases/create?view=azure-devops-rest-7.0&tabs=HTTP
+    curl -X POST https://vsrm.dev.azure.com/CustomerDemos-JL/ElevanceHealth/_apis/Release/releases?api-version=7.1-preview.8 \
+      --user '':'$(PAT)' \
+      -H "Content-Type: application/json" \
+      -H "Accept:application/json" \
+      -d {
+            "definitionId": 1,
+            "manualEnvironments": [
+            "Stage 2"
+            ],
+            "artifacts": [],
+            "variables": {},
+            "environmentsMetadata": [
+
+            ],
+            "properties": {
+            }
+        }
+
