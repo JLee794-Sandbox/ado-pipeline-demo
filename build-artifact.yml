@@ -19,6 +19,15 @@ steps:
   displayName: 'Determine version option'
 
 - script: |
+    if [[ ${{ variables.BuildSourceBranchName }} -eq 'main' ]]
+    then
+      echo ##vso[build.addbuildtag]preproduction
+    else
+      echo ##vso[build.addbuildtag]production
+    fi
+  displayName: 'Associate the appropriate tags'
+
+- script: |
     touch demo-artifact.txt
     mv demo-artifact.txt $(Build.ArtifactStagingDirectory)
   displayName: 'Create Artifact'
