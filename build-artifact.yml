@@ -21,9 +21,9 @@ steps:
 - script: |
     if [[ ${{ variables.BuildSourceBranchName }} -eq 'main' ]]
     then
-      echo ##vso[build.addbuildtag]preproduction
-    else
       echo ##vso[build.addbuildtag]production
+    else
+      echo ##vso[build.addbuildtag]preproduction
     fi
   displayName: 'Associate the appropriate tags'
 
