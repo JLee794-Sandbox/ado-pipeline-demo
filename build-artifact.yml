@@ -1,0 +1,35 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+trigger:
+- main
+
+pool:
+  vmImage: ubuntu-latest
+
+variables:
+- name: versionOption
+  value: patch
+  
+steps:
+- script: |
+    # Your logic for determining major/minor/patch/custom type versions for the artifact goes here.
+  displayName: 'Determine version option'
+
+- script: |
+    touch demo-artifact.txt
+    mv demo-artifact.txt $(Build.ArtifactStagingDirectory)
+  displayName: 'Create Artifact'
+
+- task: UniversalPackages@0
+  displayName: 'Publish to Artifact Feed'
+  inputs:
+    command: 'publish'
+    publishDirectory: '$(Build.ArtifactStagingDirectory)'
+    feedsToUsePublish: 'internal'
+    vstsFeedPublish: 'c07def7e-1df0-4755-b66e-c8fd781b260d'
+    vstsFeedPackagePublish: 'elevance-test'
+    versionOption: '$(versionOption)'
+    packagePublishDescription: 'sample artifact to trigger deployment pipelines'
