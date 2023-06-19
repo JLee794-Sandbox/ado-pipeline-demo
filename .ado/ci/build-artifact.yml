@@ -10,8 +10,11 @@ trigger:
     - main
   paths:
     exclude:
-    - .ado/**
+    - .ado/** # Don't trigger on pipeline config change (for testing)
 
+# Reasoning around placing schedules on the CI/build pipeline:
+#  Each time a deployment is scheduled, the latest code from the branch that requires Staging/QA should be referenced
+#   to minimize surprises, and ensure consistency during testing activities
 schedules:
 - cron: '0 0 * * *'
   # mm HH DD MM DW
@@ -62,7 +65,7 @@ steps:
     ${{ if eq(variables['Build.SourceBranchName'], 'main') }}:
         artifactName: 'prod'
     ${{ else }}:
-        artifactName: 'dev'
+        artifactName: '$(Build.Reason).preprod'
     
 # - task: UniversalPackages@0
 #   displayName: 'Publish to Artifact Feed'
