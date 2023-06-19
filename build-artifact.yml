@@ -23,13 +23,22 @@ steps:
     mv demo-artifact.txt $(Build.ArtifactStagingDirectory)
   displayName: 'Create Artifact'
 
-- task: UniversalPackages@0
-  displayName: 'Publish to Artifact Feed'
+- task: PublishPipelineArtifact@1
   inputs:
-    command: 'publish'
-    publishDirectory: '$(Build.ArtifactStagingDirectory)'
-    feedsToUsePublish: 'internal'
-    vstsFeedPublish: 'c07def7e-1df0-4755-b66e-c8fd781b260d'
-    vstsFeedPackagePublish: 'elevance-test'
-    versionOption: '$(versionOption)'
-    packagePublishDescription: 'sample artifact to trigger deployment pipelines'
+    targetPath: '$(Pipeline.Workspace)'
+    publishLocation: 'pipeline'
+    ${{ if eq(variables['Build.SourceBranchName'], 'main') }}:
+        artifactName: 'prod'
+    ${{ else }}:
+        artifactName: 'dev'
+    
+# - task: UniversalPackages@0
+#   displayName: 'Publish to Artifact Feed'
+#   inputs:
+#     command: 'publish'
+#     publishDirectory: '$(Build.ArtifactStagingDirectory)'
+#     feedsToUsePublish: 'internal'
+#     vstsFeedPublish: 'c07def7e-1df0-4755-b66e-c8fd781b260d'
+#     vstsFeedPackagePublish: 'elevance-test'
+#     versionOption: '$(versionOption)'
+#     packagePublishDescription: 'sample artifact to trigger deployment pipelines'
