@@ -19,7 +19,7 @@ steps:
   displayName: 'Determine version option'
 
 - script: |
-    if [[ ${{ variables.BuildSourceBranchName }} -eq 'main' ]]
+    if [[ ${{ variables.Build.SourceBranchName }} -eq 'main' ]]
     then
       echo ##vso[build.addbuildtag]production
     else
