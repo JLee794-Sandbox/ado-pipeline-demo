@@ -3,8 +3,31 @@
 # Add steps that build, run tests, deploy, and more:
 # https://aka.ms/yaml
 
-trigger: none
-# - feature/*
+trigger:
+  branches:
+   include:
+    - feature/*
+    - main
+  paths:
+    exclude:
+    - .ado/**
+
+schedules:
+- cron: '0 0 * * *'
+  # mm HH DD MM DW
+  displayName: Daily 8 am build
+  branches:
+    include:
+    - main
+    - releases/*
+
+- cron: '0 12 * * 0'
+  displayName: Weekly Sunday build
+  branches:
+    include:
+    - releases/*
+  always: true
+
 
 pool:
   vmImage: ubuntu-latest
