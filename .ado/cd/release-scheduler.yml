@@ -3,49 +3,25 @@
 # Add steps that build, run tests, deploy, and more:
 # https://aka.ms/yaml
 
-trigger: none
+# Trigger conditions:
+# - Multiple schedules that will be added/removed based on <>
+# - Build artifact is published to artifact feed
+
+trigger:
+- release
 
 variables:
-- group: 'ReleaseAPIParameters'
+- name: 
+  value:
+
 pool:
   vmImage: ubuntu-latest
 
-steps:
-
-# 1. Get the appropriate Release Pipeline's release ID
-# 2. Get the environment ID (stage to execute)
-# 2. Construct Call
-# 3. Deploy to selective stages
-- script: |
-    # API documentation https://learn.microsoft.com/en-us/rest/api/azure/devops/release/releases/update-release-environment?view=azure-devops-rest-5.1&tabs=HTTP
-    curl -X PATCH https://vsrm.dev.azure.com/CustomerDemos-JL/ElevanceHealth/_apis/Release/releases/7/environments/3?api-version=5.1-preview.6 \
-      --user '':'$(PAT)' \
-      -H "Content-Type: application/json" \
-      -H "Accept:application/json" \
-      -d '{
-            "status": "inProgress",
-            "scheduledDeploymentTime": null,
-            "comment": null,
-            "variables": {}
-          }'
-
-- script: |
-    # API documentation https://learn.microsoft.com/en-us/rest/api/azure/devops/release/releases/create?view=azure-devops-rest-7.0&tabs=HTTP
-    curl -X POST https://vsrm.dev.azure.com/CustomerDemos-JL/ElevanceHealth/_apis/Release/releases?api-version=7.1-preview.8 \
-      --user '':'$(PAT)' \
-      -H "Content-Type: application/json" \
-      -H "Accept:application/json" \
-      -d '{
-            "definitionId": 1,
-            "manualEnvironments": [
-            "Stage 2"
-            ],
-            "artifacts": [],
-            "variables": {},
-            "environmentsMetadata": [
-
-            ],
-            "properties": {
-            }
-        }'
-
+jobs:
+- job: 
+  pool:
+    vmImage: 'windows-latest'
+  steps:
+  - script: echo .
+  - template: .ado/templates/stg.deploy-template.yml  # Template reference
+  - script: echo This step runs after the template's steps.
