@@ -52,19 +52,21 @@ jobs:
   condition: not(eq($(Build.Reason), 'Schedule')))
   # variables:
   strategy:
-    deploy:
-      steps:
-      - bash: |
-          echo "##[group]Deploying to Dev..."
-          echo "##[debug]downloading pipeline artifact to $(Pipeline.Workspace)"
-      - task: DownloadPipelineArtifact@2
-        inputs:
-          buildType: 'current'
-          targetPath: '$(Pipeline.Workspace)'
+    runOnce:
+        
+      deploy:
+        steps:
+        - bash: |
+            echo "##[group]Deploying to Dev..."
+            echo "##[debug]downloading pipeline artifact to $(Pipeline.Workspace)"
+        - task: DownloadPipelineArtifact@2
+          inputs:
+            buildType: 'current'
+            targetPath: '$(Pipeline.Workspace)'
 
-      - bash: |
-          echo "##[debug]downloaded pipeline artifact"
-          echo "##[endgroup]"
+        - bash: |
+            echo "##[debug]downloaded pipeline artifact"
+            echo "##[endgroup]"
 
 - deployment: stg
   displayName: 'Deploy to Stage (1) environment'
@@ -73,20 +75,21 @@ jobs:
   condition: eq($(Build.Reason), 'Schedule'))
   # variables:
   strategy:
-    deploy:
-      steps:
-      - bash: |
-          echo "##[group]Deploying to Stg..."
-          echo "##[debug]downloading pipeline artifact to $(Pipeline.Workspace)"
-      - task: DownloadPipelineArtifact@2
-        inputs:
-          buildType: 'specific'
-          project: '5782de39-7081-4bef-b770-373a26b9f288' # Project GUID
-          definition: '23' # BuildArtifact Pipeline ID
-          specificBuildWithTriggering: true
-          buildVersionToDownload: 'latest' # Will download latest as default, will 
-          targetPath: '$(Pipeline.Workspace)'
+    runOnce:
+      deploy:
+        steps:
+        - bash: |
+            echo "##[group]Deploying to Stg..."
+            echo "##[debug]downloading pipeline artifact to $(Pipeline.Workspace)"
+        - task: DownloadPipelineArtifact@2
+          inputs:
+            buildType: 'specific'
+            project: '5782de39-7081-4bef-b770-373a26b9f288' # Project GUID
+            definition: '23' # BuildArtifact Pipeline ID
+            specificBuildWithTriggering: true
+            buildVersionToDownload: 'latest' # Will download latest as default, will 
+            targetPath: '$(Pipeline.Workspace)'
 
-      - bash: |
-          echo "##[debug]downloaded pipeline artifact"
-          echo "##[endgroup]"
+        - bash: |
+            echo "##[debug]downloaded pipeline artifact"
+            echo "##[endgroup]"
