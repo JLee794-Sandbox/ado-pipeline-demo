@@ -14,7 +14,7 @@ schedules:
     - main
     # exclude: [ string ] # which branches to exclude from the schedule
   always: true # whether to always run the pipeline or only if there have been source code changes since the last successful scheduled run. The default is false.
-  
+
 - cron: '0 12 * * 1-5'
   displayName: '12pm Daily (M-F) Base Release Cadence' # friendly name given to a specific schedule
   branches:
@@ -59,11 +59,7 @@ jobs:
           echo "##[debug]downloading pipeline artifact to $(Pipeline.Workspace)"
       - task: DownloadPipelineArtifact@2
         inputs:
-          buildType: 'specific'
-          project: '5782de39-7081-4bef-b770-373a26b9f288' # Project GUID
-          definition: '23' # BuildArtifact Pipeline ID
-          specificBuildWithTriggering: true
-          buildVersionToDownload: 'latest' # Will download latest as default, will 
+          buildType: 'current'
           targetPath: '$(Pipeline.Workspace)'
 
       - bash: |
