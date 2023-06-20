@@ -21,6 +21,24 @@ pool:
   vmImage: ubuntu-latest
 
 jobs:
+- deployment: dev
+  displayName: 'Deploy to Dev environment'
+  environment: 'dev'
+  # condition: 
+  # variables:
+  strategy:
+    deploy:
+      steps:
+      - task: DownloadPipelineArtifact@2
+        inputs:
+          buildType: 'specific'
+          project: '5782de39-7081-4bef-b770-373a26b9f288'
+          definition: '23'
+          specificBuildWithTriggering: true
+          buildVersionToDownload: 'latest'
+          targetPath: '$(Pipeline.Workspace)'
+      - shell: ls $(Pipeline.Workspace)
+
 - job: 
   pool:
     vmImage: 'ubuntu-latest'
