@@ -64,9 +64,9 @@ steps:
     targetPath: '$(Pipeline.Workspace)'
     publishLocation: 'pipeline'
     ${{ if eq(variables['Build.SourceBranchName'], 'main') }}:
-        artifactName: '$(Build.Reason).$(artifactName).prod'
+        artifactName: '$(artifactName).$(Build.BuildId).prod'
     ${{ else }}:
-        artifactName: '$(Build.Reason).$(artifactName).preprod'
+        artifactName: '$(artifactName).$(Build.BuildId).preprod'
     
 # - task: UniversalPackages@0
 #   displayName: 'Publish to Artifact Feed'
