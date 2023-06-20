@@ -7,12 +7,15 @@
 # - Multiple schedules that will be added/removed based on <>
 # - Build artifact is published to artifact feed
 
-trigger:
-- release
-
-variables:
-- name: 
-  value:
+trigger: none
+pr: none
+resources:
+  pipelines:
+    - pipeline: 'BuildArtifact'
+      source: 'BuildArtifact'
+      trigger:
+        branches:
+          - main
 
 pool:
   vmImage: ubuntu-latest
@@ -20,8 +23,15 @@ pool:
 jobs:
 - job: 
   pool:
-    vmImage: 'windows-latest'
+    vmImage: 'ubuntu-latest'
   steps:
-  - script: echo .
-  - template: .ado/templates/stg.deploy-template.yml  # Template reference
+  - task: DownloadPipelineArtifact@2
+    inputs:
+      buildType: 'specific'
+      project: '5782de39-7081-4bef-b770-373a26b9f288'
+      definition: '23'
+      specificBuildWithTriggering: true
+      buildVersionToDownload: 'latest'
+      targetPath: '$(Pipeline.Workspace)'
+
   - script: echo This step runs after the template's steps.
