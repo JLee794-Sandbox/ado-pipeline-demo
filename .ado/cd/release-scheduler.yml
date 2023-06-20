@@ -6,6 +6,30 @@
 # Trigger conditions:
 # - Multiple schedules that will be added/removed based on <>
 # - Build artifact is published to artifact feed
+schedules:
+- cron: '0 8 * * 1-5'
+  displayName: '8am Daily (M-F) Base Release Cadence' # friendly name given to a specific schedule
+  branches:
+    include: # [ string ] # which branches the schedule applies to
+    - main
+    # exclude: [ string ] # which branches to exclude from the schedule
+  always: true # whether to always run the pipeline or only if there have been source code changes since the last successful scheduled run. The default is false.
+  
+- cron: '0 12 * * 1-5'
+  displayName: '12pm Daily (M-F) Base Release Cadence' # friendly name given to a specific schedule
+  branches:
+    include: # [ string ] # which branches the schedule applies to
+    - main
+    # exclude: [ string ] # which branches to exclude from the schedule
+  always: true # whether to always run the pipeline or only if there have been source code changes since the last successful scheduled run. The default is false.
+
+- cron: '0 15 * * 1-5'
+  displayName: '3pm Daily (M-F) Base Release Cadence' # friendly name given to a specific schedule
+  branches:
+    include: # [ string ] # which branches the schedule applies to
+    - main
+    # exclude: [ string ] # which branches to exclude from the schedule
+  always: true # whether to always run the pipeline or only if there have been source code changes since the last successful scheduled run. The default is false.
 
 trigger: none
 pr: none
@@ -24,32 +48,49 @@ jobs:
 - deployment: dev
   displayName: 'Deploy to Dev environment'
   environment: 'dev'
-  # condition: 
+  # Condition: Only deploy to dev on build artifact generation/manual. Do not deploy on scheduled runs
+  condition: not(eq($(Build.Reason), 'Schedule')))
   # variables:
   strategy:
     deploy:
       steps:
+      - bash: |
+          echo "##[group]Deploying to Dev..."
+          echo "##[debug]downloading pipeline artifact to $(Pipeline.Workspace)"
       - task: DownloadPipelineArtifact@2
         inputs:
           buildType: 'specific'
-          project: '5782de39-7081-4bef-b770-373a26b9f288'
-          definition: '23'
+          project: '5782de39-7081-4bef-b770-373a26b9f288' # Project GUID
+          definition: '23' # BuildArtifact Pipeline ID
           specificBuildWithTriggering: true
-          buildVersionToDownload: 'latest'
+          buildVersionToDownload: 'latest' # Will download latest as default, will 
           targetPath: '$(Pipeline.Workspace)'
-      - shell: ls $(Pipeline.Workspace)
 
-- job: 
-  pool:
-    vmImage: 'ubuntu-latest'
-  steps:
-  - task: DownloadPipelineArtifact@2
-    inputs:
-      buildType: 'specific'
-      project: '5782de39-7081-4bef-b770-373a26b9f288'
-      definition: '23'
-      specificBuildWithTriggering: true
-      buildVersionToDownload: 'latest'
-      targetPath: '$(Pipeline.Workspace)'
+      - bash: |
+          echo "##[debug]downloaded pipeline artifact"
+          echo "##[endgroup]"
 
-  - script: echo This step runs after the template's steps.
+- deployment: stg
+  displayName: 'Deploy to Stage (1) environment'
+  environment: 'stage'
+  # Condition: Only deploy on schedule
+  condition: eq($(Build.Reason), 'Schedule'))
+  # variables:
+  strategy:
+    deploy:
+      steps:
+      - bash: |
+          echo "##[group]Deploying to Dev..."
+          echo "##[debug]downloading pipeline artifact to $(Pipeline.Workspace)"
+      - task: DownloadPipelineArtifact@2
+        inputs:
+          buildType: 'specific'
+          project: '5782de39-7081-4bef-b770-373a26b9f288' # Project GUID
+          definition: '23' # BuildArtifact Pipeline ID
+          specificBuildWithTriggering: true
+          buildVersionToDownload: 'latest' # Will download latest as default, will 
+          targetPath: '$(Pipeline.Workspace)'
+
+      - bash: |
+          echo "##[debug]downloaded pipeline artifact"
+          echo "##[endgroup]"
