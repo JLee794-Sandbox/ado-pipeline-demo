@@ -49,7 +49,7 @@ jobs:
   displayName: 'Deploy to Dev environment'
   environment: 'dev'
   # Condition: Only deploy to dev on build artifact generation/manual. Do not deploy on scheduled runs
-  condition: not(eq($(Build.Reason), 'Schedule')))
+  condition: not(eq(variables[Build.'Reason'], 'Schedule')))
   # variables:
   strategy:
     runOnce:
