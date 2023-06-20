@@ -38,7 +38,8 @@ pool:
 variables:
 - name: versionOption
   value: patch
-  
+- name: artifactName
+  value: demo
 steps:
 - script: |
     # Your logic for determining major/minor/patch/custom type versions for the artifact goes here.
@@ -63,9 +64,9 @@ steps:
     targetPath: '$(Pipeline.Workspace)'
     publishLocation: 'pipeline'
     ${{ if eq(variables['Build.SourceBranchName'], 'main') }}:
-        artifactName: 'prod'
+        artifactName: '$(Build.Reason).$(artifactName).prod'
     ${{ else }}:
-        artifactName: '$(Build.Reason).preprod'
+        artifactName: '$(Build.Reason).$(artifactName).preprod'
     
 # - task: UniversalPackages@0
 #   displayName: 'Publish to Artifact Feed'
